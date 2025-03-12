@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ZxingTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="zxing_framing_rect_width">300dp</item>
+        <item name="zxing_framing_rect_height">300dp</item>
+    </style>
+
+</resources>
