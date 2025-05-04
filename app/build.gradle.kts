@@ -75,10 +75,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.zxing:core:3.5.3")
-    implementation("com.google.firebase:firebase-database:21.0.0") // Firebase Realtime Database
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation(libs.material)
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.core)
+    implementation(libs.firebase.database) // Firebase Realtime Database
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
 }
