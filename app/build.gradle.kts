@@ -78,7 +78,13 @@ dependencies {
     implementation(libs.material)
     implementation(libs.zxing.android.embedded)
     implementation(libs.core)
-    implementation(libs.firebase.database) // Firebase Realtime Database
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.logging.interceptor)
+
+    // Coroutines
+    implementation (libs.kotlinx.coroutines.core)
+    implementation (libs.kotlinx.coroutines.android)
 
 }

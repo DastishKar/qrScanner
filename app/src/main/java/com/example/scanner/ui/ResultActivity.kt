@@ -1,5 +1,6 @@
 package com.example.scanner.ui
 
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
@@ -37,6 +38,7 @@ class ResultActivity : AppCompatActivity() {
 
         // Кнопка для возврата к сканированию
         binding.backToScanButton.setOnClickListener {
+            startActivity(Intent(this, ScanActivity::class.java))
             finish() // Закрываем ResultActivity и возвращаемся к ScanActivity
         }
     }
