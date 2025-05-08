@@ -3,6 +3,7 @@ package com.example.scanner.ui
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +22,10 @@ class ScanActivity : AppCompatActivity() {
     private lateinit var barcodeView: DecoratedBarcodeView
     private var isScanning = true // Флаг для контроля сканирования
     private lateinit var progressDialog: ProgressDialog
+
+    companion object {
+        private const val TAG = "ScanActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +46,10 @@ class ScanActivity : AppCompatActivity() {
 
         // Инициализация barcodeView
         barcodeView = findViewById(R.id.barcode_scanner)
+
+        // Проверяем наличие куки при создании активности
+        val cookie = RetrofitClient.getAuthCookie()
+        Log.d(TAG, "onCreate: текущая кука: $cookie")
 
         // Наблюдаем за состоянием загрузки
         viewModel.isLoading.observe(this) { isLoading ->
@@ -68,6 +77,11 @@ class ScanActivity : AppCompatActivity() {
             }
         }
 
+        // Добавляем кнопку для перехода на экран логина, если нет авторизации
+        binding.loginButton.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         // Настройка декодирования QR-кодов
         barcodeView.decodeContinuous(object : BarcodeCallback {
             override fun barcodeResult(result: BarcodeResult) {
@@ -86,7 +100,6 @@ class ScanActivity : AppCompatActivity() {
                 // Логика для отображения точек результата (если нужно)
             }
         })
-
     }
 
     override fun onResume() {
@@ -94,11 +107,18 @@ class ScanActivity : AppCompatActivity() {
         barcodeView.resume()
 
         // Проверяем наличие куки при возобновлении активности
-        if (RetrofitClient.getAuthCookie().isEmpty()) {
+        val cookie = RetrofitClient.getAuthCookie()
+        Log.d(TAG, "onResume: текущая кука: $cookie")
+
+        if (cookie.isEmpty()) {
             // Если куки нет, показываем сообщение
             Toast.makeText(this, "Требуется авторизация. Нажмите кнопку Войти.", Toast.LENGTH_LONG).show()
+            binding.loginButton.visibility = android.view.View.VISIBLE
         } else {
+            // Если кука есть, скрываем кнопку логина
+            binding.loginButton.visibility = android.view.View.GONE
             isScanning = true // Включаем сканирование
+            Toast.makeText(this, "Авторизация успешна. Сканируйте QR-код.", Toast.LENGTH_SHORT).show()
         }
     }
 

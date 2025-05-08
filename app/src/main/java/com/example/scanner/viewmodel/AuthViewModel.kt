@@ -6,35 +6,57 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.scanner.data.RetrofitClient
-import com.example.scanner.model.AuthRequest
-import com.example.scanner.repository.AuthRepository
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
-    private val authRepository = AuthRepository(application)
+    private val TAG = "AuthViewModel"
     val loginState = MutableLiveData<Boolean>()
     val loginError = MutableLiveData<String?>()
 
     fun loginUser(username: String, password: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.getService().login(AuthRequest(username, password))
+                Log.d(TAG, "Попытка авторизации: $username")
 
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    Log.d("Login123", "Успешно: $body")
-                    loginState.value = true
+                val success = RetrofitClient.login(username, password)
+
+                if (success) {
+                    Log.d(TAG, "Логин успешен через RetrofitClient.login")
+
+                    // Проверяем наличие куки
+                    val cookie = RetrofitClient.getAuthCookie()
+                    if (cookie.isNotEmpty()) {
+                        Log.d(TAG, "Кука получена и сохранена: $cookie")
+                        loginState.value = true
+                        loginError.value = null
+                    } else {
+                        Log.e(TAG, "Авторизация успешна, но кука отсутствует!")
+                        loginState.value = false
+                        loginError.value = "Ошибка: куки не получены"
+                    }
                 } else {
-                    Log.e("Login123", "Ошибка авторизации: Код: ${response.code()}, сообщение: ${response.errorBody()?.string() ?: "Нет тела ошибки"}")
+                    Log.e(TAG, "RetrofitClient.login вернул false")
                     loginState.value = false
+                    loginError.value = "Ошибка авторизации"
                 }
-            } catch (e: Exception) {
-                Log.e("Login123", "Ошибка запроса: ${e.localizedMessage}")
+            } catch (e: HttpException) {
+                val errorMsg = "Ошибка HTTP: ${e.code()} - ${e.message()}"
+                Log.e(TAG, errorMsg, e)
                 loginState.value = false
+                loginError.value = errorMsg
+            } catch (e: IOException) {
+                val errorMsg = "Ошибка сети: ${e.localizedMessage}"
+                Log.e(TAG, errorMsg, e)
+                loginState.value = false
+                loginError.value = errorMsg
+            } catch (e: Exception) {
+                val errorMsg = "Непредвиденная ошибка: ${e.localizedMessage}"
+                Log.e(TAG, errorMsg, e)
+                loginState.value = false
+                loginError.value = errorMsg
             }
         }
     }
-
-
 }
-

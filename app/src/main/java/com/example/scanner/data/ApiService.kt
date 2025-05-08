@@ -9,10 +9,10 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ApiService {
-    @POST("auth/login")
+    @POST("login")
     suspend fun login(@Body loginRequest: AuthRequest): Response<Any>
 
-    @POST("auth")
+    @POST("login")
     suspend fun scan(
         @Header("Cookie") cookie: String,
         @Body scanRequest: ScanRequest

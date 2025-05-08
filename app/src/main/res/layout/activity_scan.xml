@@ -23,6 +23,12 @@
         android:layout_gravity="center"
         android:background="@drawable/barrier_overlay" />
 
-
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="48dp"
+        android:text="Войти"
+        android:layout_gravity="bottom"/>
 
 </FrameLayout>
